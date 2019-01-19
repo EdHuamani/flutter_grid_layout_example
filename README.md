@@ -1,6 +1,6 @@
 # grid_layout_card_view
 
-A new Flutter project.
+<img src="preview.jpeg"></img>
 
 ## Getting Started
 
