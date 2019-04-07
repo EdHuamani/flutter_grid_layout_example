@@ -92,10 +92,7 @@ class ArcClipper extends CustomClipper<Path> {
   }
 
   @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    ArcClipper oldie = oldClipper as ArcClipper;
-    return height != oldie.height;
-  }
+  bool shouldReclip(ArcClipper oldClipper) => height != oldClipper.height;
 }
 
 class CardItem {
