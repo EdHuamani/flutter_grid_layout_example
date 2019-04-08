@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -7,59 +8,48 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      home: MyHomePage(),
+      home: CardItemGrid(items: allItems),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key}) : super(key: key);
+class CardItemGrid extends StatelessWidget {
+  CardItemGrid({this.items});
+  final List<CardItem> items;
 
-  @override
-  _MyHomePageState createState() => new _MyHomePageState();
-}
+  Widget _buildItem(BuildContext context, int index) {
+    return Card(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          Icon(items[index].icon, size: 42.0, color: Colors.purple),
+          Text(items[index].title, style: Theme.of(context).textTheme.title),
+        ],
+      ),
+    );
+  }
 
-class _MyHomePageState extends State<MyHomePage> {
-  Widget _buildItem(CardItem item) => Card(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Icon(
-              item.icon,
-              size: 42.0,
-              color: Colors.purple,
-            ),
-            Text(
-              item.title,
-              style: Theme.of(context).textTheme.title,
-            ),
-          ],
-        ),
-      );
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          SizedBox(
-            height: 200.0,
-            child: ClipPath(
-              clipper: ArcClipper(50.0),
-              child: Container(
-                color: Colors.purple,
+          ClipPath(
+            clipper: ArcClipper(50.0),
+            child: Container(
+              color: Colors.purple,
+              height: 200.0,
+              padding: EdgeInsets.only(bottom: 40),
+              child: Center(
+                child: Text(
+                  'GridLayout & CardView',
+                  style: Theme.of(context)
+                      .textTheme
+                      .title
+                      .copyWith(color: Colors.white),
+                ),
               ),
             ),
-          ),
-          Positioned(
-            top: 58.0,
-            left: 0.0,
-            right: 0.0,
-            child: Center(
-                child: Text('GridLayout & CardView',
-                    style: Theme.of(context)
-                        .textTheme
-                        .title
-                        .copyWith(color: Colors.white))),
           ),
           Padding(
             padding: EdgeInsets.only(top: 120),
@@ -70,8 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 8.0),
               itemCount: allItems.length,
-              itemBuilder: (BuildContext context, int index) =>
-                  _buildItem(allItems[index]),
+              itemBuilder: _buildItem,
             ),
           )
         ],
@@ -87,32 +76,23 @@ class ArcClipper extends CustomClipper<Path> {
   final double height;
 
   @override
-  Path getClip(Size size) {
-    return _getBottomPath(size);
-  }
+  Path getClip(Size size) => _getBottomPath(size);
 
   Path _getBottomPath(Size size) {
-    var path = Path();
-    path.lineTo(0.0, size.height - height);
-    //Adds a quadratic bezier segment that curves from the current point
-    //to the given point (x2,y2), using the control point (x1,y1).
-    path.quadraticBezierTo(
-        size.width / 4, size.height, size.width / 2, size.height);
-    path.quadraticBezierTo(
-        size.width * 3 / 4, size.height, size.width, size.height - height);
-
-    path.lineTo(size.width, 0.0);
-
-    path.close();
-
-    return path;
+    return Path()
+      ..lineTo(0.0, size.height - height)
+      //Adds a quadratic bezier segment that curves from the current point
+      //to the given point (x2,y2), using the control point (x1,y1).
+      ..quadraticBezierTo(
+          size.width / 4, size.height, size.width / 2, size.height)
+      ..quadraticBezierTo(
+          size.width * 3 / 4, size.height, size.width, size.height - height)
+      ..lineTo(size.width, 0.0)
+      ..close();
   }
 
   @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    ArcClipper oldie = oldClipper as ArcClipper;
-    return height != oldie.height;
-  }
+  bool shouldReclip(ArcClipper oldClipper) => height != oldClipper.height;
 }
 
 class CardItem {
